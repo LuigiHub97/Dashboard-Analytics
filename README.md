@@ -6,17 +6,19 @@ Rastreador pessoal de finanças (gastos/receitas) com dashboard de gráficos. MV
 
 - **Frontend**: React + TypeScript (Vite), React Router, Recharts, Axios
 - **Backend**: Node.js + Express + TypeScript, Prisma ORM
-- **DB**: SQLite em desenvolvimento (via Prisma). Migração para PostgreSQL é trocar o `provider` e a `DATABASE_URL` (ver seção abaixo)
+- **DB**: PostgreSQL (via Prisma)
 - **Auth**: JWT (access token, 7 dias), senha com bcrypt
 
 ## Rodando localmente
+
+Precisa de um PostgreSQL acessível (local, Docker, ou uma instância gratuita como a do Render/Neon) — defina a `DATABASE_URL` em `backend/.env` a partir de `backend/.env.example`.
 
 ### Backend
 
 ```bash
 cd backend
 npm install
-npx prisma migrate dev --name init
+npx prisma migrate deploy
 npm run dev
 ```
 
@@ -30,7 +32,7 @@ npm install
 npm run dev
 ```
 
-App sobe em `http://localhost:5173`.
+App sobe em `http://localhost:5173`. Configure `frontend/.env` (a partir de `frontend/.env.example`) com a URL da API.
 
 ## Estrutura
 
@@ -69,9 +71,23 @@ Todas as rotas de `/api/transactions`, `/api/categories` e `/api/dashboard/*` ex
 - `GET /api/dashboard/by-category?month=YYYY-MM`
 - `GET /api/dashboard/trend?months=6`
 
-## Migrando para PostgreSQL
+## Deploy
 
-1. Suba um Postgres (Docker: `docker run -e POSTGRES_PASSWORD=postgres -p 5432:5432 postgres`).
-2. Em `backend/prisma/schema.prisma`, troque `provider = "sqlite"` por `provider = "postgresql"`.
-3. Em `backend/.env`, troque `DATABASE_URL` para algo como `postgresql://postgres:postgres@localhost:5432/dashboard_analytics`.
-4. Rode `npx prisma migrate dev`.
+### Backend — Render
+
+O repositório inclui `render.yaml` na raiz (Blueprint): cria automaticamente um Postgres free e o web service da API, já com `DATABASE_URL` e `JWT_SECRET` conectados.
+
+1. No [Render Dashboard](https://dashboard.render.com), **New > Blueprint**, aponte para este repositório.
+2. Render lê o `render.yaml`, cria o banco `dashboard-analytics-db` e o serviço `dashboard-analytics-api`.
+3. Após o primeiro deploy, edite a env var `CORS_ORIGIN` do serviço para a URL do frontend (ex.: `https://seu-app.vercel.app`).
+4. A API fica em algo como `https://dashboard-analytics-api.onrender.com`. Teste com `GET /health`.
+
+O `buildCommand` já roda `prisma migrate deploy`, aplicando as migrations em `backend/prisma/migrations` no Postgres do Render.
+
+### Frontend — Vercel
+
+1. No [Vercel Dashboard](https://vercel.com), **Add New > Project**, importe este repositório.
+2. **Root Directory**: `frontend` (framework Vite é detectado automaticamente).
+3. Env var: `VITE_API_URL` = `https://<sua-api>.onrender.com/api`.
+4. Deploy. O `frontend/vercel.json` já cuida do rewrite de rotas do React Router.
+5. Volte no Render e atualize `CORS_ORIGIN` com a URL que a Vercel gerou.
