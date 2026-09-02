@@ -1,4 +1,15 @@
-import axios from "axios";
+import axios, { isAxiosError } from "axios";
+
+export function getErrorMessage(err: unknown, fallback: string): string {
+  if (isAxiosError(err)) {
+    if (!err.response) {
+      return "Não foi possível conectar à API. Verifique sua conexão ou tente novamente em instantes.";
+    }
+    const data = err.response.data as { error?: string } | undefined;
+    if (data?.error) return data.error;
+  }
+  return fallback;
+}
 
 export const api = axios.create({
   baseURL: import.meta.env.VITE_API_URL ?? "http://localhost:4000/api",

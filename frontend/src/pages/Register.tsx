@@ -1,6 +1,7 @@
 import { FormEvent, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
+import { getErrorMessage } from "../services/api";
 
 export function Register() {
   const { register } = useAuth();
@@ -24,8 +25,8 @@ export function Register() {
     try {
       await register(email, password, name || undefined);
       navigate("/");
-    } catch {
-      setError("Não foi possível criar a conta. O email já pode estar em uso.");
+    } catch (err) {
+      setError(getErrorMessage(err, "Não foi possível criar a conta."));
     } finally {
       setSubmitting(false);
     }

@@ -1,6 +1,7 @@
 import { FormEvent, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
+import { getErrorMessage } from "../services/api";
 
 export function Login() {
   const { login } = useAuth();
@@ -17,8 +18,8 @@ export function Login() {
     try {
       await login(email, password);
       navigate("/");
-    } catch {
-      setError("Email ou senha inválidos.");
+    } catch (err) {
+      setError(getErrorMessage(err, "Email ou senha inválidos."));
     } finally {
       setSubmitting(false);
     }
