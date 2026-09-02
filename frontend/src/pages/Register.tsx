@@ -1,0 +1,60 @@
+import { FormEvent, useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { useAuth } from "../context/AuthContext";
+
+export function Register() {
+  const { register } = useAuth();
+  const navigate = useNavigate();
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState<string | null>(null);
+  const [submitting, setSubmitting] = useState(false);
+
+  async function handleSubmit(e: FormEvent) {
+    e.preventDefault();
+    setError(null);
+
+    if (password.length < 6) {
+      setError("A senha precisa ter ao menos 6 caracteres.");
+      return;
+    }
+
+    setSubmitting(true);
+    try {
+      await register(email, password, name || undefined);
+      navigate("/");
+    } catch {
+      setError("Não foi possível criar a conta. O email já pode estar em uso.");
+    } finally {
+      setSubmitting(false);
+    }
+  }
+
+  return (
+    <div className="auth-page">
+      <form className="auth-card" onSubmit={handleSubmit}>
+        <h1>Criar conta</h1>
+        <label>
+          Nome
+          <input type="text" value={name} onChange={(e) => setName(e.target.value)} />
+        </label>
+        <label>
+          Email
+          <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} required />
+        </label>
+        <label>
+          Senha
+          <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} required />
+        </label>
+        {error && <p className="form-error">{error}</p>}
+        <button type="submit" className="btn-primary" disabled={submitting}>
+          Criar conta
+        </button>
+        <p className="auth-switch">
+          Já tem conta? <Link to="/login">Entrar</Link>
+        </p>
+      </form>
+    </div>
+  );
+}
