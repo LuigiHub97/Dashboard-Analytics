@@ -1,0 +1,25 @@
+# Segredos e credenciais — nunca versionar
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.p12
+*.pfx
+credentials.json
+*.sqlite
+*.sqlite3
+*.db
+*.db-journal
+
+# Dependências e build
+node_modules/
+dist/
+build/
+
+# Sistema / editor
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+*.log
