@@ -10,7 +10,7 @@ services:
     runtime: node
     plan: free
     rootDir: backend
-    buildCommand: npm install && npm run build && npx prisma migrate deploy
+    buildCommand: npm install && npm run build && (npx prisma migrate resolve --rolled-back 20260902000000_init || true) && npx prisma migrate deploy
     startCommand: npm start
     healthCheckPath: /health
     envVars:
