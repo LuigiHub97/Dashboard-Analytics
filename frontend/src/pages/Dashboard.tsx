@@ -49,7 +49,7 @@ export function Dashboard() {
         <p className="empty-state">Carregando...</p>
       ) : (
         <>
-          <SummaryCards summary={summary} />
+          <SummaryCards summary={summary} expenseBreakdown={breakdown.filter((b) => b.type === "expense")} />
 
           <div className="dashboard-grid">
             <section className="card">
