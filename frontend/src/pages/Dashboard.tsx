@@ -3,11 +3,21 @@ import { CategoryBreakdownChart } from "../components/charts/CategoryBreakdownCh
 import { SummaryCards } from "../components/charts/SummaryCards";
 import { TrendChart } from "../components/charts/TrendChart";
 import * as dashboardService from "../services/dashboard.service";
-import { CategoryBreakdownItem, MonthlySummary, TrendItem } from "../types";
+import * as transactionsService from "../services/transactions.service";
+import { CategoryBreakdownItem, MonthlySummary, Transaction, TrendItem } from "../types";
 
 function currentMonth(): string {
   const now = new Date();
   return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}`;
+}
+
+function monthRange(month: string): { start: string; end: string } {
+  const [year, m] = month.split("-").map(Number);
+  const lastDay = new Date(year, m, 0).getDate();
+  return {
+    start: `${month}-01`,
+    end: `${month}-${String(lastDay).padStart(2, "0")}`,
+  };
 }
 
 export function Dashboard() {
@@ -15,21 +25,26 @@ export function Dashboard() {
   const [summary, setSummary] = useState<MonthlySummary | null>(null);
   const [breakdown, setBreakdown] = useState<CategoryBreakdownItem[]>([]);
   const [trend, setTrend] = useState<TrendItem[]>([]);
+  const [monthTransactions, setMonthTransactions] = useState<Transaction[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     let cancelled = false;
     setLoading(true);
 
+    const { start, end } = monthRange(month);
+
     Promise.all([
       dashboardService.getSummary(month),
       dashboardService.getByCategory(month),
       dashboardService.getTrend(6),
-    ]).then(([summaryRes, breakdownRes, trendRes]) => {
+      transactionsService.listTransactions({ startDate: start, endDate: end, limit: 100 }),
+    ]).then(([summaryRes, breakdownRes, trendRes, transactionsRes]) => {
       if (cancelled) return;
       setSummary(summaryRes);
       setBreakdown(breakdownRes);
       setTrend(trendRes);
+      setMonthTransactions(transactionsRes.items);
       setLoading(false);
     });
 
@@ -49,7 +64,11 @@ export function Dashboard() {
         <p className="empty-state">Carregando...</p>
       ) : (
         <>
-          <SummaryCards summary={summary} expenseBreakdown={breakdown.filter((b) => b.type === "expense")} />
+          <SummaryCards
+            summary={summary}
+            expenseBreakdown={breakdown.filter((b) => b.type === "expense")}
+            expenseTransactions={monthTransactions.filter((t) => t.type === "expense")}
+          />
 
           <div className="dashboard-grid">
             <section className="card">
