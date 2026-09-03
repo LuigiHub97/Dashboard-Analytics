@@ -26,7 +26,7 @@ export function Navbar() {
             <path d="M4 17l5-5 4 4 7-9" stroke="#12261c" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
           </svg>
         </span>
-        Dashboard Analytics
+        <span className="navbar-brand-text">Dashboard Analytics</span>
       </div>
       <nav className="navbar-links">
         <NavLink to="/" end className={({ isActive }) => (isActive ? "active" : "")}>
@@ -38,7 +38,7 @@ export function Navbar() {
       </nav>
       <div className="navbar-user">
         <span className="navbar-avatar">{initials(user?.name, user?.email)}</span>
-        <span>{user?.name || user?.email}</span>
+        <span className="navbar-user-name">{user?.name || user?.email}</span>
         <button className="btn-secondary" onClick={handleLogout}>
           Sair
         </button>

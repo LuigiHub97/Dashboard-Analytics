@@ -31,18 +31,21 @@ export function TransactionList({ transactions, onEdit, onDelete, onTogglePaid }
         <tbody>
           {transactions.map((t) => (
             <tr key={t.id}>
-              <td>{dateFormatter.format(new Date(t.date))}</td>
-              <td>{t.category.name}</td>
-              <td>
+              <td data-label="Data">{dateFormatter.format(new Date(t.date))}</td>
+              <td data-label="Categoria">{t.category.name}</td>
+              <td data-label="Descrição">
                 {t.description || "—"}
                 {t.recurringTransactionId && <span className="badge-recurring">Fixa</span>}
               </td>
-              <td className={t.type === "income" ? "amount-income" : t.paid ? "amount-paid" : "amount-expense"}>
+              <td
+                data-label="Valor"
+                className={t.type === "income" ? "amount-income" : t.paid ? "amount-paid" : "amount-expense"}
+              >
                 {t.type === "income" ? "+" : "-"}
                 {currencyFormatter.format(t.amount)}
                 {t.type === "expense" && <PayButton paid={t.paid} onToggle={() => onTogglePaid(t)} />}
               </td>
-              <td className="row-actions">
+              <td data-label="" className="row-actions">
                 <button className="btn-link" onClick={() => onEdit(t)}>
                   Editar
                 </button>

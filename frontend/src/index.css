@@ -22,8 +22,13 @@
   box-sizing: border-box;
 }
 
+html {
+  overflow-x: hidden;
+}
+
 body {
   margin: 0;
+  overflow-x: hidden;
   font-family: "IBM Plex Sans", system-ui, sans-serif;
   background:
     radial-gradient(ellipse 900px 480px at 12% -10%, oklch(78% 0.19 150 / 0.10), transparent 65%),
@@ -142,6 +147,29 @@ a:hover {
   font-weight: 700;
   font-family: "IBM Plex Mono", monospace;
   flex-shrink: 0;
+}
+
+@media (max-width: 640px) {
+  .navbar {
+    padding: 0 16px;
+    gap: 14px;
+  }
+
+  .navbar-brand-text {
+    display: none;
+  }
+
+  .navbar-links {
+    gap: 14px;
+  }
+
+  .navbar-user-name {
+    display: none;
+  }
+
+  .navbar-user {
+    gap: 10px;
+  }
 }
 
 .page-header {
@@ -417,6 +445,62 @@ select:focus {
   padding: 12px 10px;
   border-bottom: 1px solid var(--border);
   white-space: nowrap;
+}
+
+@media (max-width: 700px) {
+  .table-scroll {
+    overflow-x: visible;
+  }
+
+  .transaction-table {
+    min-width: 0;
+    width: 100%;
+    display: block;
+  }
+
+  .transaction-table thead {
+    display: none;
+  }
+
+  .transaction-table tbody {
+    display: block;
+  }
+
+  .transaction-table tr {
+    display: block;
+    padding: 10px 0;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .transaction-table tr:last-child {
+    border-bottom: none;
+  }
+
+  .transaction-table td {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 4px 0;
+    border-bottom: none;
+    white-space: normal;
+  }
+
+  .transaction-table td[data-label]:not([data-label=""])::before {
+    content: attr(data-label);
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--text-muted);
+    flex-shrink: 0;
+    margin-right: auto;
+  }
+
+  .transaction-table td.row-actions {
+    justify-content: flex-end;
+    gap: 16px;
+    margin-top: 4px;
+  }
 }
 
 .amount-income {
