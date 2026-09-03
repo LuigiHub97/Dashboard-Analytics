@@ -5,6 +5,7 @@ import { TransactionInput } from "../services/transactions.service";
 interface TransactionFormProps {
   categories: Category[];
   initial?: Transaction | null;
+  fixedType?: TransactionType;
   onSubmit: (input: TransactionInput) => Promise<void>;
   onCancel?: () => void;
   onConvertToRecurring?: (dayOfMonth: number) => Promise<void>;
@@ -18,8 +19,15 @@ function centsToDisplay(cents: number): string {
   return (cents / 100).toLocaleString("pt-BR", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 }
 
-export function TransactionForm({ categories, initial, onSubmit, onCancel, onConvertToRecurring }: TransactionFormProps) {
-  const [type, setType] = useState<TransactionType>(initial?.type ?? "expense");
+export function TransactionForm({
+  categories,
+  initial,
+  fixedType,
+  onSubmit,
+  onCancel,
+  onConvertToRecurring,
+}: TransactionFormProps) {
+  const [type, setType] = useState<TransactionType>(initial?.type ?? fixedType ?? "expense");
   const [amountCents, setAmountCents] = useState(initial ? Math.round(initial.amount * 100) : 0);
   const [date, setDate] = useState(initial ? initial.date.slice(0, 10) : todayISO());
   const [description, setDescription] = useState(initial?.description ?? "");
@@ -86,18 +94,24 @@ export function TransactionForm({ categories, initial, onSubmit, onCancel, onCon
 
   return (
     <form className="transaction-form" onSubmit={handleSubmit}>
-      <div className="type-toggle">
-        <button
-          type="button"
-          className={type === "expense" ? "is-active-expense" : ""}
-          onClick={() => setType("expense")}
-        >
-          Despesa
-        </button>
-        <button type="button" className={type === "income" ? "is-active-income" : ""} onClick={() => setType("income")}>
-          Receita
-        </button>
-      </div>
+      {!fixedType && (
+        <div className="type-toggle">
+          <button
+            type="button"
+            className={type === "expense" ? "is-active-expense" : ""}
+            onClick={() => setType("expense")}
+          >
+            Despesa
+          </button>
+          <button
+            type="button"
+            className={type === "income" ? "is-active-income" : ""}
+            onClick={() => setType("income")}
+          >
+            Receita
+          </button>
+        </div>
+      )}
 
       <div className="amount-field">
         <span className="amount-field-label">Valor</span>

@@ -19,6 +19,7 @@ function AppLayout() {
           <Route element={<PrivateRoute />}>
             <Route path="/" element={<Dashboard />} />
             <Route path="/transactions" element={<Transactions />} />
+            <Route path="/expenses" element={<Transactions fixedType="expense" title="Despesas" />} />
           </Route>
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>

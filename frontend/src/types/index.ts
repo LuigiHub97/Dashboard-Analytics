@@ -53,6 +53,7 @@ export interface TransactionListResponse {
 }
 
 export interface TransactionFilters {
+  type?: TransactionType;
   startDate?: string;
   endDate?: string;
   categoryId?: string;
