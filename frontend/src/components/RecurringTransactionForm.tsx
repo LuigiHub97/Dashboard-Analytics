@@ -1,0 +1,161 @@
+import { ChangeEvent, FormEvent, useEffect, useState } from "react";
+import { Category, RecurringTransaction, TransactionType } from "../types";
+import { RecurringTransactionInput } from "../services/recurringTransactions.service";
+
+interface RecurringTransactionFormProps {
+  categories: Category[];
+  initial?: RecurringTransaction | null;
+  onSubmit: (input: RecurringTransactionInput) => Promise<void>;
+  onCancel?: () => void;
+}
+
+function centsToDisplay(cents: number): string {
+  return (cents / 100).toLocaleString("pt-BR", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+}
+
+export function RecurringTransactionForm({ categories, initial, onSubmit, onCancel }: RecurringTransactionFormProps) {
+  const [type, setType] = useState<TransactionType>(initial?.type ?? "expense");
+  const [amountCents, setAmountCents] = useState(initial ? Math.round(initial.amount * 100) : 0);
+  const [dayOfMonth, setDayOfMonth] = useState(initial?.dayOfMonth ?? 5);
+  const [description, setDescription] = useState(initial?.description ?? "");
+  const [categoryId, setCategoryId] = useState(initial?.categoryId ?? "");
+  const [error, setError] = useState<string | null>(null);
+  const [submitting, setSubmitting] = useState(false);
+
+  const filteredCategories = categories.filter((c) => c.type === type);
+
+  useEffect(() => {
+    if (!filteredCategories.some((c) => c.id === categoryId)) {
+      setCategoryId(filteredCategories[0]?.id ?? "");
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [type, categories]);
+
+  function handleAmountChange(e: ChangeEvent<HTMLInputElement>) {
+    const digits = e.target.value.replace(/\D/g, "");
+    setAmountCents(digits ? parseInt(digits, 10) : 0);
+  }
+
+  async function handleSubmit(e: FormEvent) {
+    e.preventDefault();
+    setError(null);
+
+    if (amountCents <= 0) {
+      setError("Informe um valor válido.");
+      return;
+    }
+    if (!categoryId) {
+      setError("Selecione uma categoria.");
+      return;
+    }
+    if (dayOfMonth < 1 || dayOfMonth > 31) {
+      setError("Informe um dia entre 1 e 31.");
+      return;
+    }
+
+    setSubmitting(true);
+    try {
+      await onSubmit({
+        type,
+        amount: amountCents / 100,
+        description: description || undefined,
+        dayOfMonth,
+        categoryId,
+      });
+      if (!initial) {
+        setAmountCents(0);
+        setDescription("");
+        setDayOfMonth(5);
+      }
+    } catch {
+      setError("Não foi possível salvar.");
+    } finally {
+      setSubmitting(false);
+    }
+  }
+
+  return (
+    <form className="transaction-form" onSubmit={handleSubmit}>
+      <div className="type-toggle">
+        <button
+          type="button"
+          className={type === "expense" ? "is-active-expense" : ""}
+          onClick={() => setType("expense")}
+        >
+          Despesa
+        </button>
+        <button type="button" className={type === "income" ? "is-active-income" : ""} onClick={() => setType("income")}>
+          Receita
+        </button>
+      </div>
+
+      <div className="amount-field">
+        <span className="amount-field-label">Valor</span>
+        <div className="amount-input-wrap">
+          <span className="amount-prefix">R$</span>
+          <input
+            type="text"
+            inputMode="numeric"
+            value={centsToDisplay(amountCents)}
+            onChange={handleAmountChange}
+            placeholder="0,00"
+            autoFocus
+          />
+        </div>
+      </div>
+
+      <span className="field-label">Categoria</span>
+      {filteredCategories.length === 0 ? (
+        <p className="empty-state">Nenhuma categoria de {type === "expense" ? "despesa" : "receita"} cadastrada.</p>
+      ) : (
+        <div className="category-chips">
+          {filteredCategories.map((c) => (
+            <button
+              type="button"
+              key={c.id}
+              className={"category-chip" + (categoryId === c.id ? " selected" : "")}
+              onClick={() => setCategoryId(c.id)}
+            >
+              {c.name}
+            </button>
+          ))}
+        </div>
+      )}
+
+      <div className="form-row">
+        <label>
+          Todo dia
+          <input
+            type="number"
+            min={1}
+            max={31}
+            value={dayOfMonth}
+            onChange={(e) => setDayOfMonth(Number(e.target.value))}
+          />
+        </label>
+        <label>
+          Descrição
+          <input
+            type="text"
+            value={description}
+            onChange={(e) => setDescription(e.target.value)}
+            placeholder="Opcional"
+          />
+        </label>
+      </div>
+
+      {error && <p className="form-error">{error}</p>}
+
+      <div className="form-actions">
+        <button type="submit" className="btn-primary" disabled={submitting}>
+          {initial ? "Salvar" : "Adicionar"}
+        </button>
+        {onCancel && (
+          <button type="button" className="btn-secondary" onClick={onCancel}>
+            Cancelar
+          </button>
+        )}
+      </div>
+    </form>
+  );
+}

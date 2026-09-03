@@ -30,7 +30,10 @@ export function TransactionList({ transactions, onEdit, onDelete }: TransactionL
           <tr key={t.id}>
             <td>{dateFormatter.format(new Date(t.date))}</td>
             <td>{t.category.name}</td>
-            <td>{t.description || "—"}</td>
+            <td>
+              {t.description || "—"}
+              {t.recurringTransactionId && <span className="badge-recurring">Fixa</span>}
+            </td>
             <td className={t.type === "income" ? "amount-income" : "amount-expense"}>
               {t.type === "income" ? "+" : "-"}
               {currencyFormatter.format(t.amount)}

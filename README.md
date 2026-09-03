@@ -70,6 +70,12 @@ Todas as rotas de `/api/transactions`, `/api/categories` e `/api/dashboard/*` ex
 - `GET /api/dashboard/summary?month=YYYY-MM`
 - `GET /api/dashboard/by-category?month=YYYY-MM`
 - `GET /api/dashboard/trend?months=6`
+- `GET /api/recurring-transactions`
+- `POST /api/recurring-transactions` — `{ type, amount, dayOfMonth, categoryId, description? }`
+- `PUT /api/recurring-transactions/:id` — mesmos campos, mais `active` para pausar/retomar
+- `DELETE /api/recurring-transactions/:id`
+
+Uma despesa/receita recorrente gera automaticamente a transação do mês corrente (no dia configurado, ou no último dia do mês se ele for menor) na primeira requisição autenticada feita naquele mês — sem necessidade de cron externo. Cada regra gera no máximo uma transação por mês.
 
 ## Deploy
 

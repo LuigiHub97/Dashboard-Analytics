@@ -23,6 +23,20 @@ export interface Transaction {
   categoryId: string;
   category: Category;
   userId: string;
+  recurringTransactionId?: string | null;
+  createdAt: string;
+}
+
+export interface RecurringTransaction {
+  id: string;
+  type: TransactionType;
+  amount: number;
+  description?: string | null;
+  dayOfMonth: number;
+  active: boolean;
+  categoryId: string;
+  category: Category;
+  userId: string;
   createdAt: string;
 }
 

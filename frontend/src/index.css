@@ -436,6 +436,20 @@ select:focus {
   color: var(--text-secondary);
 }
 
+.badge-recurring {
+  display: inline-block;
+  margin-left: 8px;
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--accent);
+  background: color-mix(in oklch, var(--accent) 16%, transparent);
+  padding: 2px 6px;
+  border-radius: 999px;
+  vertical-align: middle;
+}
+
 .empty-state {
   color: var(--text-muted);
   font-size: 14px;
