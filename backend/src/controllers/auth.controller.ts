@@ -14,6 +14,7 @@ const DEFAULT_CATEGORIES = [
   { name: "Saúde", type: "expense" },
   { name: "Estudos", type: "expense" },
   { name: "Cartão", type: "expense"},
+  { name: "Outros", type: "expense" },
 ];
 
 const registerSchema = z.object({
