@@ -13,6 +13,7 @@ const DEFAULT_CATEGORIES = [
   { name: "Lazer", type: "expense" },
   { name: "Saúde", type: "expense" },
   { name: "Estudos", type: "expense" },
+  { name: "Cartão", type: "expense"},
 ];
 
 const registerSchema = z.object({
