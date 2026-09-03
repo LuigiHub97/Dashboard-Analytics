@@ -35,6 +35,11 @@ export function Register() {
   return (
     <div className="auth-page">
       <form className="auth-card" onSubmit={handleSubmit}>
+        <span className="auth-mark">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+            <path d="M4 17l5-5 4 4 7-9" stroke="#12261c" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
+          </svg>
+        </span>
         <h1>Criar conta</h1>
         <label>
           Nome
