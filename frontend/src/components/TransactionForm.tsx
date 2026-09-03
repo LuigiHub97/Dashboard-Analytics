@@ -7,6 +7,7 @@ interface TransactionFormProps {
   initial?: Transaction | null;
   onSubmit: (input: TransactionInput) => Promise<void>;
   onCancel?: () => void;
+  onConvertToRecurring?: (dayOfMonth: number) => Promise<void>;
 }
 
 function todayISO(): string {
@@ -17,15 +18,19 @@ function centsToDisplay(cents: number): string {
   return (cents / 100).toLocaleString("pt-BR", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 }
 
-export function TransactionForm({ categories, initial, onSubmit, onCancel }: TransactionFormProps) {
+export function TransactionForm({ categories, initial, onSubmit, onCancel, onConvertToRecurring }: TransactionFormProps) {
   const [type, setType] = useState<TransactionType>(initial?.type ?? "expense");
   const [amountCents, setAmountCents] = useState(initial ? Math.round(initial.amount * 100) : 0);
   const [date, setDate] = useState(initial ? initial.date.slice(0, 10) : todayISO());
   const [description, setDescription] = useState(initial?.description ?? "");
   const [categoryId, setCategoryId] = useState(initial?.categoryId ?? "");
   const [showDetails, setShowDetails] = useState(Boolean(initial?.description));
+  const [makeRecurring, setMakeRecurring] = useState(false);
+  const [recurringDay, setRecurringDay] = useState(initial ? new Date(initial.date).getUTCDate() : 5);
   const [error, setError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
+
+  const canOfferRecurring = Boolean(initial && onConvertToRecurring && !initial.recurringTransactionId);
 
   const filteredCategories = categories.filter((c) => c.type === type);
 
@@ -63,6 +68,9 @@ export function TransactionForm({ categories, initial, onSubmit, onCancel }: Tra
         description: description || undefined,
         categoryId,
       });
+      if (canOfferRecurring && makeRecurring && onConvertToRecurring) {
+        await onConvertToRecurring(recurringDay);
+      }
       if (!initial) {
         setAmountCents(0);
         setDescription("");
@@ -145,6 +153,27 @@ export function TransactionForm({ categories, initial, onSubmit, onCancel }: Tra
               placeholder="Opcional"
             />
           </label>
+        </div>
+      )}
+
+      {canOfferRecurring && (
+        <div className="recurring-convert">
+          <label className="checkbox-row">
+            <input type="checkbox" checked={makeRecurring} onChange={(e) => setMakeRecurring(e.target.checked)} />
+            Tornar recorrente (repetir todo mês)
+          </label>
+          {makeRecurring && (
+            <label className="recurring-day-field">
+              Todo dia
+              <input
+                type="number"
+                min={1}
+                max={31}
+                value={recurringDay}
+                onChange={(e) => setRecurringDay(Number(e.target.value))}
+              />
+            </label>
+          )}
         </div>
       )}
 

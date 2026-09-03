@@ -1,5 +1,6 @@
 import { Router } from "express";
 import {
+  convertTransactionToRecurring,
   createTransaction,
   deleteTransaction,
   listTransactions,
@@ -17,6 +18,7 @@ router.use(asyncHandler(generateDueRecurring));
 router.get("/", asyncHandler(listTransactions));
 router.post("/", asyncHandler(createTransaction));
 router.put("/:id", asyncHandler(updateTransaction));
+router.post("/:id/recurring", asyncHandler(convertTransactionToRecurring));
 router.delete("/:id", asyncHandler(deleteTransaction));
 
 export default router;

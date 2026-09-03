@@ -599,6 +599,34 @@ select:focus {
   color: var(--accent);
 }
 
+.recurring-convert {
+  margin-bottom: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.recurring-convert .recurring-day-field {
+  max-width: 140px;
+}
+
+.checkbox-row {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  color: var(--text-secondary);
+  cursor: pointer;
+}
+
+.checkbox-row input[type="checkbox"] {
+  accent-color: var(--accent);
+  width: 16px;
+  height: 16px;
+  cursor: pointer;
+}
+
 .form-secondary-toggle {
   background: none;
   border: none;

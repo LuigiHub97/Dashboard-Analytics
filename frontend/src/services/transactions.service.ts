@@ -1,5 +1,5 @@
 import { api } from "./api";
-import { Transaction, TransactionFilters, TransactionListResponse, TransactionType } from "../types";
+import { RecurringTransaction, Transaction, TransactionFilters, TransactionListResponse, TransactionType } from "../types";
 
 export interface TransactionInput {
   type: TransactionType;
@@ -26,4 +26,12 @@ export async function updateTransaction(id: string, input: Partial<TransactionIn
 
 export async function deleteTransaction(id: string): Promise<void> {
   await api.delete(`/transactions/${id}`);
+}
+
+export async function convertTransactionToRecurring(
+  id: string,
+  dayOfMonth: number
+): Promise<{ transaction: Transaction; recurring: RecurringTransaction }> {
+  const { data } = await api.post(`/transactions/${id}/recurring`, { dayOfMonth });
+  return data;
 }

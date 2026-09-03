@@ -78,6 +78,13 @@ export function Transactions() {
     await reload();
   }
 
+  async function handleConvertToRecurring(dayOfMonth: number) {
+    if (!editing) return;
+    await transactionsService.convertTransactionToRecurring(editing.id, dayOfMonth);
+    await reloadRecurring();
+    await reload();
+  }
+
   async function handleCreateRecurring(input: recurringService.RecurringTransactionInput) {
     await recurringService.createRecurringTransaction(input);
     closeForm();
@@ -150,6 +157,7 @@ export function Transactions() {
             initial={editing}
             onSubmit={handleUpdate}
             onCancel={() => setEditing(null)}
+            onConvertToRecurring={handleConvertToRecurring}
           />
         </div>
       )}

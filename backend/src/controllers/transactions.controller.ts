@@ -13,6 +13,10 @@ const createTransactionSchema = z.object({
 
 const updateTransactionSchema = createTransactionSchema.partial();
 
+const convertToRecurringSchema = z.object({
+  dayOfMonth: z.number().int().min(1).max(31),
+});
+
 const listQuerySchema = z.object({
   startDate: z.string().optional(),
   endDate: z.string().optional(),
@@ -127,6 +131,47 @@ export async function updateTransaction(req: AuthRequest, res: Response) {
   });
 
   return res.json(transaction);
+}
+
+export async function convertTransactionToRecurring(req: AuthRequest, res: Response) {
+  const { id } = req.params;
+  const { dayOfMonth } = convertToRecurringSchema.parse(req.body);
+
+  const transaction = await prisma.transaction.findFirst({
+    where: { id, userId: req.userId },
+  });
+  if (!transaction) {
+    return res.status(404).json({ error: "Transaction not found" });
+  }
+  if (transaction.recurringTransactionId) {
+    return res.status(409).json({ error: "Transaction is already linked to a recurring rule" });
+  }
+
+  const monthKey = `${transaction.date.getUTCFullYear()}-${String(transaction.date.getUTCMonth() + 1).padStart(2, "0")}`;
+
+  const result = await prisma.$transaction(async (tx) => {
+    const rule = await tx.recurringTransaction.create({
+      data: {
+        type: transaction.type,
+        amount: transaction.amount,
+        description: transaction.description,
+        dayOfMonth,
+        categoryId: transaction.categoryId,
+        userId: req.userId as string,
+        lastGeneratedMonth: monthKey,
+      },
+    });
+
+    const updated = await tx.transaction.update({
+      where: { id: transaction.id },
+      data: { recurringTransactionId: rule.id },
+      include: { category: true },
+    });
+
+    return { transaction: updated, recurring: rule };
+  });
+
+  return res.status(201).json(result);
 }
 
 export async function deleteTransaction(req: AuthRequest, res: Response) {
