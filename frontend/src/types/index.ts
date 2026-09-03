@@ -20,6 +20,7 @@ export interface Transaction {
   amount: number;
   date: string;
   description?: string | null;
+  paid: boolean;
   categoryId: string;
   category: Category;
   userId: string;

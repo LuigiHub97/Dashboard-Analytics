@@ -37,6 +37,7 @@ model Transaction {
   amount                 Float
   date                   DateTime
   description            String?
+  paid                   Boolean               @default(true)
   userId                 String
   user                   User                  @relation(fields: [userId], references: [id], onDelete: Cascade)
   categoryId             String

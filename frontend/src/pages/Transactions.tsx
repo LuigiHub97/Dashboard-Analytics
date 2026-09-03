@@ -78,6 +78,11 @@ export function Transactions() {
     await reload();
   }
 
+  async function handleTogglePaid(transaction: Transaction) {
+    await transactionsService.setTransactionPaid(transaction.id, !transaction.paid);
+    await reload();
+  }
+
   async function handleConvertToRecurring(dayOfMonth: number) {
     if (!editing) return;
     await transactionsService.convertTransactionToRecurring(editing.id, dayOfMonth);
@@ -183,7 +188,12 @@ export function Transactions() {
           <p className="empty-state">Carregando...</p>
         ) : (
           <>
-            <TransactionList transactions={transactions} onEdit={setEditing} onDelete={handleDelete} />
+            <TransactionList
+              transactions={transactions}
+              onEdit={setEditing}
+              onDelete={handleDelete}
+              onTogglePaid={handleTogglePaid}
+            />
             {pagination && (
               <Pagination pagination={pagination} onPageChange={(page) => setFilters({ ...filters, page })} />
             )}

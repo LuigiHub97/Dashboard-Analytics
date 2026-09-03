@@ -35,3 +35,8 @@ export async function convertTransactionToRecurring(
   const { data } = await api.post(`/transactions/${id}/recurring`, { dayOfMonth });
   return data;
 }
+
+export async function setTransactionPaid(id: string, paid: boolean): Promise<Transaction> {
+  const { data } = await api.put<Transaction>(`/transactions/${id}`, { paid });
+  return data;
+}

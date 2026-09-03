@@ -11,7 +11,9 @@ const createTransactionSchema = z.object({
   categoryId: z.string().min(1),
 });
 
-const updateTransactionSchema = createTransactionSchema.partial();
+const updateTransactionSchema = createTransactionSchema.partial().extend({
+  paid: z.boolean().optional(),
+});
 
 const convertToRecurringSchema = z.object({
   dayOfMonth: z.number().int().min(1).max(31),
@@ -126,6 +128,7 @@ export async function updateTransaction(req: AuthRequest, res: Response) {
       ...(data.date ? { date: new Date(data.date) } : {}),
       ...(data.description !== undefined ? { description: data.description } : {}),
       ...(data.categoryId ? { categoryId: data.categoryId } : {}),
+      ...(data.paid !== undefined ? { paid: data.paid } : {}),
     },
     include: { category: true },
   });

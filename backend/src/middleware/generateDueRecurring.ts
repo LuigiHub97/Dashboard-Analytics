@@ -90,6 +90,9 @@ export async function generateDueRecurring(req: AuthRequest, res: Response, next
               categoryId: rule.categoryId,
               userId,
               recurringTransactionId: rule.id,
+              // Auto-generated bills start unpaid so the user can track them month to
+              // month; income (salary, etc.) has no "pay" action, so it stays true.
+              paid: rule.type === "expense" ? false : true,
             },
           });
         });

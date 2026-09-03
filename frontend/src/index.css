@@ -431,6 +431,83 @@ select:focus {
   font-family: "IBM Plex Mono", monospace;
 }
 
+.amount-paid {
+  color: var(--good);
+  font-weight: 600;
+  font-family: "IBM Plex Mono", monospace;
+}
+
+.pay-btn-wrap {
+  position: relative;
+  display: inline-flex;
+  margin-left: 10px;
+  vertical-align: middle;
+}
+
+.pay-btn {
+  border: none;
+  border-radius: 999px;
+  padding: 3px 10px;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  cursor: pointer;
+  font-family: "IBM Plex Sans", sans-serif;
+}
+
+.pay-btn:disabled {
+  opacity: 0.6;
+  cursor: default;
+}
+
+.pay-btn-pending {
+  background: var(--critical-bg);
+  color: var(--critical);
+}
+
+.pay-btn-pending:hover:not(:disabled) {
+  background: color-mix(in oklch, var(--critical) 24%, transparent);
+}
+
+.pay-btn-paid {
+  background: var(--good-bg);
+  color: var(--good);
+}
+
+.pay-btn-paid:hover:not(:disabled) {
+  background: color-mix(in oklch, var(--good) 24%, transparent);
+}
+
+@keyframes cifra-float {
+  0% {
+    opacity: 0;
+    transform: translate(-50%, 0) scale(0.8);
+  }
+  15% {
+    opacity: 1;
+    transform: translate(-50%, -6px) scale(1.15);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(-50%, -34px) scale(1);
+  }
+}
+
+.cifra-pop {
+  position: absolute;
+  left: 50%;
+  top: -6px;
+  transform: translate(-50%, 0);
+  font-family: "IBM Plex Mono", monospace;
+  font-weight: 700;
+  font-size: 13px;
+  color: var(--good);
+  pointer-events: none;
+  white-space: nowrap;
+  animation: cifra-float 0.7s ease-out forwards;
+}
+
 .row-actions {
   white-space: nowrap;
 }

@@ -1,15 +1,17 @@
+import { PayButton } from "./PayButton";
 import { Transaction } from "../types";
 
 interface TransactionListProps {
   transactions: Transaction[];
   onEdit: (transaction: Transaction) => void;
   onDelete: (transaction: Transaction) => void;
+  onTogglePaid: (transaction: Transaction) => Promise<void>;
 }
 
 const currencyFormatter = new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" });
 const dateFormatter = new Intl.DateTimeFormat("pt-BR", { timeZone: "UTC" });
 
-export function TransactionList({ transactions, onEdit, onDelete }: TransactionListProps) {
+export function TransactionList({ transactions, onEdit, onDelete, onTogglePaid }: TransactionListProps) {
   if (transactions.length === 0) {
     return <p className="empty-state">Nenhuma transação encontrada.</p>;
   }
@@ -35,9 +37,10 @@ export function TransactionList({ transactions, onEdit, onDelete }: TransactionL
                 {t.description || "—"}
                 {t.recurringTransactionId && <span className="badge-recurring">Fixa</span>}
               </td>
-              <td className={t.type === "income" ? "amount-income" : "amount-expense"}>
+              <td className={t.type === "income" ? "amount-income" : t.paid ? "amount-paid" : "amount-expense"}>
                 {t.type === "income" ? "+" : "-"}
                 {currencyFormatter.format(t.amount)}
+                {t.type === "expense" && <PayButton paid={t.paid} onToggle={() => onTogglePaid(t)} />}
               </td>
               <td className="row-actions">
                 <button className="btn-link" onClick={() => onEdit(t)}>
