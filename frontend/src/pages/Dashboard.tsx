@@ -64,16 +64,12 @@ export function Dashboard() {
         <p className="empty-state">Carregando...</p>
       ) : (
         <>
-          <SummaryCards
-            summary={summary}
-            expenseBreakdown={breakdown.filter((b) => b.type === "expense")}
-            expenseTransactions={monthTransactions.filter((t) => t.type === "expense")}
-          />
+          <SummaryCards summary={summary} />
 
           <div className="dashboard-grid">
             <section className="card">
               <h2>Despesas por categoria</h2>
-              <CategoryBreakdownChart items={breakdown} />
+              <CategoryBreakdownChart items={breakdown} transactions={monthTransactions} />
             </section>
 
             <section className="card">

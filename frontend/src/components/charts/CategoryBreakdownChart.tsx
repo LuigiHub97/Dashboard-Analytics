@@ -1,5 +1,6 @@
+import { useState } from "react";
 import { Cell, Pie, PieChart, Tooltip } from "recharts";
-import { CategoryBreakdownItem } from "../../types";
+import { CategoryBreakdownItem, Transaction } from "../../types";
 
 const SERIES_COLORS = [
   "oklch(74% 0.16 150)",
@@ -16,8 +17,15 @@ const MAX_SLOTS = 8;
 const SIZE = 168;
 
 const currencyFormatter = new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" });
+const dateFormatter = new Intl.DateTimeFormat("pt-BR", { timeZone: "UTC" });
 
-export function CategoryBreakdownChart({ items }: { items: CategoryBreakdownItem[] }) {
+interface CategoryBreakdownChartProps {
+  items: CategoryBreakdownItem[];
+  transactions?: Transaction[];
+}
+
+export function CategoryBreakdownChart({ items, transactions = [] }: CategoryBreakdownChartProps) {
+  const [expandedName, setExpandedName] = useState<string | null>(null);
   const expenses = items.filter((i) => i.type === "expense").sort((a, b) => b.total - a.total);
 
   if (expenses.length === 0) {
@@ -29,12 +37,16 @@ export function CategoryBreakdownChart({ items }: { items: CategoryBreakdownItem
   const restTotal = rest.reduce((sum, i) => sum + i.total, 0);
 
   const data = [
-    ...top.map((i) => ({ name: i.categoryName, total: i.total })),
-    ...(restTotal > 0 ? [{ name: "Outros", total: restTotal }] : []),
+    ...top.map((i) => ({ name: i.categoryName, total: i.total, categoryIds: [i.categoryId] })),
+    ...(restTotal > 0 ? [{ name: "Outros", total: restTotal, categoryIds: rest.map((i) => i.categoryId) }] : []),
   ];
   const total = data.reduce((sum, i) => sum + i.total, 0);
   const colorFor = (name: string, index: number) =>
     name === "Outros" ? OTHER_COLOR : SERIES_COLORS[index % SERIES_COLORS.length];
+
+  function toggle(name: string) {
+    setExpandedName((current) => (current === name ? null : name));
+  }
 
   return (
     <div className="donut-chart">
@@ -77,13 +89,48 @@ export function CategoryBreakdownChart({ items }: { items: CategoryBreakdownItem
         </div>
       </div>
       <div className="donut-legend">
-        {data.map((entry, index) => (
-          <div className="donut-legend-row" key={entry.name}>
-            <span className="donut-legend-dot" style={{ background: colorFor(entry.name, index) }} />
-            <span className="donut-legend-label">{entry.name}</span>
-            <span className="donut-legend-value">{currencyFormatter.format(entry.total)}</span>
-          </div>
-        ))}
+        {data.map((entry, index) => {
+          const expanded = expandedName === entry.name;
+          const entryTransactions = transactions.filter((t) => entry.categoryIds.includes(t.categoryId));
+
+          return (
+            <div className="donut-legend-row" key={entry.name}>
+              <button type="button" className="donut-legend-row-btn" onClick={() => toggle(entry.name)}>
+                <svg
+                  className={"donut-legend-chevron" + (expanded ? " expanded" : "")}
+                  width="12"
+                  height="12"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="3"
+                >
+                  <path d="M6 9l6 6 6-6" />
+                </svg>
+                <span className="donut-legend-dot" style={{ background: colorFor(entry.name, index) }} />
+                <span className="donut-legend-label">{entry.name}</span>
+                <span className="donut-legend-value">{currencyFormatter.format(entry.total)}</span>
+              </button>
+
+              {expanded && (
+                <div className="donut-legend-detail">
+                  {entryTransactions.length === 0 ? (
+                    <p className="donut-legend-detail-empty">Nenhum lançamento encontrado.</p>
+                  ) : (
+                    entryTransactions.map((t) => (
+                      <div className="donut-legend-detail-row" key={t.id}>
+                        <span>
+                          {t.description || "Sem descrição"} · {dateFormatter.format(new Date(t.date))}
+                        </span>
+                        <span className="num">{currencyFormatter.format(t.amount)}</span>
+                      </div>
+                    ))
+                  )}
+                </div>
+              )}
+            </div>
+          );
+        })}
       </div>
     </div>
   );

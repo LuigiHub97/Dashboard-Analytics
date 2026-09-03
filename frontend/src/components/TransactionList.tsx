@@ -15,40 +15,42 @@ export function TransactionList({ transactions, onEdit, onDelete }: TransactionL
   }
 
   return (
-    <table className="transaction-table">
-      <thead>
-        <tr>
-          <th>Data</th>
-          <th>Categoria</th>
-          <th>Descrição</th>
-          <th>Valor</th>
-          <th></th>
-        </tr>
-      </thead>
-      <tbody>
-        {transactions.map((t) => (
-          <tr key={t.id}>
-            <td>{dateFormatter.format(new Date(t.date))}</td>
-            <td>{t.category.name}</td>
-            <td>
-              {t.description || "—"}
-              {t.recurringTransactionId && <span className="badge-recurring">Fixa</span>}
-            </td>
-            <td className={t.type === "income" ? "amount-income" : "amount-expense"}>
-              {t.type === "income" ? "+" : "-"}
-              {currencyFormatter.format(t.amount)}
-            </td>
-            <td className="row-actions">
-              <button className="btn-link" onClick={() => onEdit(t)}>
-                Editar
-              </button>
-              <button className="btn-link btn-link-danger" onClick={() => onDelete(t)}>
-                Excluir
-              </button>
-            </td>
+    <div className="table-scroll">
+      <table className="transaction-table">
+        <thead>
+          <tr>
+            <th>Data</th>
+            <th>Categoria</th>
+            <th>Descrição</th>
+            <th>Valor</th>
+            <th></th>
           </tr>
-        ))}
-      </tbody>
-    </table>
+        </thead>
+        <tbody>
+          {transactions.map((t) => (
+            <tr key={t.id}>
+              <td>{dateFormatter.format(new Date(t.date))}</td>
+              <td>{t.category.name}</td>
+              <td>
+                {t.description || "—"}
+                {t.recurringTransactionId && <span className="badge-recurring">Fixa</span>}
+              </td>
+              <td className={t.type === "income" ? "amount-income" : "amount-expense"}>
+                {t.type === "income" ? "+" : "-"}
+                {currencyFormatter.format(t.amount)}
+              </td>
+              <td className="row-actions">
+                <button className="btn-link" onClick={() => onEdit(t)}>
+                  Editar
+                </button>
+                <button className="btn-link btn-link-danger" onClick={() => onDelete(t)}>
+                  Excluir
+                </button>
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
   );
 }
