@@ -16,7 +16,11 @@ export async function generateDueRecurring(req: AuthRequest, res: Response, next
   const monthKey = currentMonthKey();
 
   const due = await prisma.recurringTransaction.findMany({
-    where: { userId, active: true, lastGeneratedMonth: { not: monthKey } },
+    where: {
+      userId,
+      active: true,
+      OR: [{ lastGeneratedMonth: null }, { lastGeneratedMonth: { not: monthKey } }],
+    },
   });
 
   if (due.length > 0) {
