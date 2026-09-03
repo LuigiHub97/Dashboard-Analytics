@@ -490,6 +490,32 @@ select:focus {
   color: var(--good);
 }
 
+.tab-toggle {
+  display: flex;
+  gap: 4px;
+  background: var(--track);
+  padding: 4px;
+  border-radius: 12px;
+  width: fit-content;
+  margin-bottom: 20px;
+}
+
+.tab-toggle button {
+  border: none;
+  background: transparent;
+  color: var(--text-muted);
+  font-weight: 700;
+  font-size: 13px;
+  padding: 9px 22px;
+  border-radius: 9px;
+  cursor: pointer;
+}
+
+.tab-toggle button.is-active {
+  background: color-mix(in oklch, var(--accent) 18%, transparent);
+  color: var(--accent);
+}
+
 .amount-field {
   margin-bottom: 18px;
 }

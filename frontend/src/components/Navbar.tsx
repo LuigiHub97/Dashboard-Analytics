@@ -35,9 +35,6 @@ export function Navbar() {
         <NavLink to="/transactions" className={({ isActive }) => (isActive ? "active" : "")}>
           Transações
         </NavLink>
-        <NavLink to="/recurring" className={({ isActive }) => (isActive ? "active" : "")}>
-          Recorrentes
-        </NavLink>
       </nav>
       <div className="navbar-user">
         <span className="navbar-avatar">{initials(user?.name, user?.email)}</span>

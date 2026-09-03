@@ -4,7 +4,6 @@ import { PrivateRoute } from "./components/PrivateRoute";
 import { AuthProvider, useAuth } from "./context/AuthContext";
 import { Dashboard } from "./pages/Dashboard";
 import { Login } from "./pages/Login";
-import { Recurring } from "./pages/Recurring";
 import { Register } from "./pages/Register";
 import { Transactions } from "./pages/Transactions";
 
@@ -20,7 +19,6 @@ function AppLayout() {
           <Route element={<PrivateRoute />}>
             <Route path="/" element={<Dashboard />} />
             <Route path="/transactions" element={<Transactions />} />
-            <Route path="/recurring" element={<Recurring />} />
           </Route>
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
