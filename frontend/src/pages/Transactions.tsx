@@ -14,33 +14,15 @@ import {
   RecurringTransaction,
   Transaction,
   TransactionFilters,
-  TransactionType,
 } from "../types";
 
 type NewEntryTab = "single" | "recurring";
 
-interface TransactionsProps {
-  fixedType?: TransactionType;
-  title?: string;
-}
-
-const ENTITY_LABEL: Record<TransactionType | "all", string> = {
-  expense: "despesa",
-  income: "receita",
-  all: "transação",
-};
-
-export function Transactions({ fixedType, title = "Transações" }: TransactionsProps) {
-  const entity = ENTITY_LABEL[fixedType ?? "all"];
-
+export function Transactions() {
   const [categories, setCategories] = useState<Category[]>([]);
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [pagination, setPagination] = useState<PaginationType | null>(null);
-  const [filters, setFilters] = useState<TransactionFilters>({
-    page: 1,
-    limit: 10,
-    ...(fixedType ? { type: fixedType } : {}),
-  });
+  const [filters, setFilters] = useState<TransactionFilters>({ page: 1, limit: 10 });
   const [editing, setEditing] = useState<Transaction | null>(null);
   const [showForm, setShowForm] = useState(false);
   const [activeTab, setActiveTab] = useState<NewEntryTab>("single");
@@ -49,13 +31,9 @@ export function Transactions({ fixedType, title = "Transações" }: Transactions
   const [recurringItems, setRecurringItems] = useState<RecurringTransaction[]>([]);
   const [recurringEditing, setRecurringEditing] = useState<RecurringTransaction | null>(null);
 
-  const visibleCategories = fixedType ? categories.filter((c) => c.type === fixedType) : categories;
-  const visibleRecurring = fixedType ? recurringItems.filter((i) => i.type === fixedType) : recurringItems;
-
   useEffect(() => {
     categoriesService.getCategories().then(setCategories);
     reloadRecurring();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   async function reload() {
@@ -138,9 +116,9 @@ export function Transactions({ fixedType, title = "Transações" }: Transactions
   return (
     <div className="page">
       <div className="page-header">
-        <h1>{title}</h1>
+        <h1>Transações</h1>
         <button className="btn-primary" onClick={() => (showForm ? closeForm() : setShowForm(true))}>
-          {showForm ? "Fechar" : `Nova ${entity}`}
+          {showForm ? "Fechar" : "Nova transação"}
         </button>
       </div>
 
@@ -164,30 +142,19 @@ export function Transactions({ fixedType, title = "Transações" }: Transactions
           </div>
 
           {activeTab === "single" ? (
-            <TransactionForm
-              categories={categories}
-              fixedType={fixedType}
-              onSubmit={handleCreate}
-              onCancel={closeForm}
-            />
+            <TransactionForm categories={categories} onSubmit={handleCreate} onCancel={closeForm} />
           ) : (
-            <RecurringTransactionForm
-              categories={categories}
-              fixedType={fixedType}
-              onSubmit={handleCreateRecurring}
-              onCancel={closeForm}
-            />
+            <RecurringTransactionForm categories={categories} onSubmit={handleCreateRecurring} onCancel={closeForm} />
           )}
         </div>
       )}
 
       {editing && (
         <div className="card">
-          <h2>Editar {entity}</h2>
+          <h2>Editar transação</h2>
           <TransactionForm
             categories={categories}
             initial={editing}
-            fixedType={fixedType}
             onSubmit={handleUpdate}
             onCancel={() => setEditing(null)}
             onConvertToRecurring={handleConvertToRecurring}
@@ -201,7 +168,6 @@ export function Transactions({ fixedType, title = "Transações" }: Transactions
           <RecurringTransactionForm
             categories={categories}
             initial={recurringEditing}
-            fixedType={fixedType}
             onSubmit={handleUpdateRecurring}
             onCancel={() => setRecurringEditing(null)}
           />
@@ -209,7 +175,7 @@ export function Transactions({ fixedType, title = "Transações" }: Transactions
       )}
 
       <div className="card">
-        <Filters categories={visibleCategories} filters={filters} onChange={setFilters} />
+        <Filters categories={categories} filters={filters} onChange={setFilters} />
       </div>
 
       <div className="card">
@@ -225,11 +191,11 @@ export function Transactions({ fixedType, title = "Transações" }: Transactions
         )}
       </div>
 
-      {visibleRecurring.length > 0 && (
+      {recurringItems.length > 0 && (
         <div className="card">
           <h2>Recorrências</h2>
           <RecurringTransactionList
-            items={visibleRecurring}
+            items={recurringItems}
             onEdit={setRecurringEditing}
             onDelete={handleDeleteRecurring}
             onToggleActive={handleToggleRecurringActive}

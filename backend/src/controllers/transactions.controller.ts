@@ -18,7 +18,6 @@ const convertToRecurringSchema = z.object({
 });
 
 const listQuerySchema = z.object({
-  type: z.enum(["income", "expense"]).optional(),
   startDate: z.string().optional(),
   endDate: z.string().optional(),
   categoryId: z.string().optional(),
@@ -30,13 +29,9 @@ const listQuerySchema = z.object({
 
 export async function listTransactions(req: AuthRequest, res: Response) {
   const query = listQuerySchema.parse(req.query);
-  const { type, startDate, endDate, categoryId, minValue, maxValue, page, limit } = query;
+  const { startDate, endDate, categoryId, minValue, maxValue, page, limit } = query;
 
   const where: Record<string, unknown> = { userId: req.userId };
-
-  if (type) {
-    where.type = type;
-  }
 
   if (startDate || endDate) {
     where.date = {

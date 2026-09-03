@@ -71,7 +71,7 @@ export function Filters({ categories, filters, onChange }: FiltersProps) {
       <button
         type="button"
         className="btn-secondary"
-        onClick={() => onChange({ page: 1, limit: filters.limit, type: filters.type })}
+        onClick={() => onChange({ page: 1, limit: filters.limit })}
       >
         Limpar filtros
       </button>
