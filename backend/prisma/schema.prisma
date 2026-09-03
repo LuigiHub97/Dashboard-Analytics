@@ -47,6 +47,10 @@ model Transaction {
 
   @@index([userId])
   @@index([userId, date])
+  // A partial unique index on (recurringTransactionId, date_trunc('month', date)) also
+  // exists (added by a raw-SQL migration) to guarantee a recurring rule can generate at
+  // most one transaction per month. Prisma's schema DSL can't express expression indexes,
+  // so it isn't declared here — don't let `prisma migrate dev` drop it as "drift".
 }
 
 model RecurringTransaction {

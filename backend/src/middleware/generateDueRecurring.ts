@@ -1,3 +1,4 @@
+import { Prisma } from "@prisma/client";
 import { NextFunction, Response } from "express";
 import { prisma } from "../config/prisma";
 import { AuthRequest } from "./auth";
@@ -30,6 +31,10 @@ function daysInMonth(year: number, month: number): number {
   return new Date(Date.UTC(year, month, 0)).getUTCDate();
 }
 
+function isUniqueConstraintError(err: unknown): boolean {
+  return err instanceof Prisma.PrismaClientKnownRequestError && err.code === "P2002";
+}
+
 export async function generateDueRecurring(req: AuthRequest, res: Response, next: NextFunction) {
   const userId = req.userId as string;
   const { year: curYear, month: curMonth } = currentMonthParts();
@@ -55,28 +60,55 @@ export async function generateDueRecurring(req: AuthRequest, res: Response, next
     // rule created from converting an old transaction, shouldn't spawn past occurrences).
     const startTotal = lastTotal !== null ? Math.max(lastTotal + 1, curTotal) : curTotal;
 
+    // Tracks the lastGeneratedMonth value this loop expects to still be in the DB, so each
+    // step below is a compare-and-swap: it only proceeds if nobody else (a concurrent
+    // request racing this same middleware) has already advanced the rule past that point.
+    let expectedPrev = rule.lastGeneratedMonth;
+
     for (let t = startTotal; t <= targetTotal; t++) {
       const { year, month } = fromTotalMonths(t);
-      const day = Math.min(rule.dayOfMonth, daysInMonth(year, month));
-      const date = new Date(Date.UTC(year, month - 1, day));
+      const newKey = monthKey(year, month);
 
-      await prisma.$transaction([
-        prisma.transaction.create({
-          data: {
-            type: rule.type,
-            amount: rule.amount,
-            date,
-            description: rule.description,
-            categoryId: rule.categoryId,
-            userId,
-            recurringTransactionId: rule.id,
-          },
-        }),
-        prisma.recurringTransaction.update({
-          where: { id: rule.id },
-          data: { lastGeneratedMonth: monthKey(year, month) },
-        }),
-      ]);
+      try {
+        const created = await prisma.$transaction(async (tx) => {
+          const cas = await tx.recurringTransaction.updateMany({
+            where: { id: rule.id, lastGeneratedMonth: expectedPrev },
+            data: { lastGeneratedMonth: newKey },
+          });
+          if (cas.count === 0) {
+            return null;
+          }
+
+          const day = Math.min(rule.dayOfMonth, daysInMonth(year, month));
+          const date = new Date(Date.UTC(year, month - 1, day));
+          return tx.transaction.create({
+            data: {
+              type: rule.type,
+              amount: rule.amount,
+              date,
+              description: rule.description,
+              categoryId: rule.categoryId,
+              userId,
+              recurringTransactionId: rule.id,
+            },
+          });
+        });
+
+        if (!created) {
+          // Another request already advanced this rule past our expected state; stop
+          // here rather than continuing with a stale view of it.
+          break;
+        }
+
+        expectedPrev = newKey;
+      } catch (err) {
+        if (isUniqueConstraintError(err)) {
+          // Belt-and-suspenders: the DB-level unique index already blocked a duplicate
+          // that the CAS check above somehow missed. Treat it the same as losing the race.
+          break;
+        }
+        throw err;
+      }
     }
   }
 
