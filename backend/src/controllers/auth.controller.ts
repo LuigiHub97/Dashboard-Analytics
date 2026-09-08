@@ -2,6 +2,7 @@ import bcrypt from "bcryptjs";
 import { Request, Response } from "express";
 import { z } from "zod";
 import { prisma } from "../config/prisma";
+import { AuthRequest } from "../middleware/auth";
 import { signToken } from "../utils/jwt";
 
 const DEFAULT_CATEGORIES = [
@@ -21,6 +22,7 @@ const registerSchema = z.object({
   email: z.string().email(),
   password: z.string().min(6),
   name: z.string().optional(),
+  businessName: z.string().optional(),
 });
 
 const loginSchema = z.object({
@@ -28,8 +30,13 @@ const loginSchema = z.object({
   password: z.string().min(1),
 });
 
+const updateProfileSchema = z.object({
+  name: z.string().optional(),
+  businessName: z.string().optional(),
+});
+
 export async function register(req: Request, res: Response) {
-  const { email, password, name } = registerSchema.parse(req.body);
+  const { email, password, name, businessName } = registerSchema.parse(req.body);
 
   const existing = await prisma.user.findUnique({ where: { email } });
   if (existing) {
@@ -43,6 +50,7 @@ export async function register(req: Request, res: Response) {
       email,
       password: hashed,
       name,
+      businessName,
       categories: { create: DEFAULT_CATEGORIES },
     },
   });
@@ -50,7 +58,7 @@ export async function register(req: Request, res: Response) {
   const token = signToken({ userId: user.id });
   return res.status(201).json({
     token,
-    user: { id: user.id, email: user.email, name: user.name },
+    user: { id: user.id, email: user.email, name: user.name, businessName: user.businessName },
   });
 }
 
@@ -70,6 +78,17 @@ export async function login(req: Request, res: Response) {
   const token = signToken({ userId: user.id });
   return res.json({
     token,
-    user: { id: user.id, email: user.email, name: user.name },
+    user: { id: user.id, email: user.email, name: user.name, businessName: user.businessName },
   });
+}
+
+export async function updateProfile(req: AuthRequest, res: Response) {
+  const data = updateProfileSchema.parse(req.body);
+
+  const user = await prisma.user.update({
+    where: { id: req.userId },
+    data,
+  });
+
+  return res.json({ id: user.id, email: user.email, name: user.name, businessName: user.businessName });
 }

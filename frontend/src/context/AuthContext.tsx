@@ -6,7 +6,8 @@ interface AuthContextValue {
   user: User | null;
   token: string | null;
   login: (email: string, password: string) => Promise<void>;
-  register: (email: string, password: string, name?: string) => Promise<void>;
+  register: (email: string, password: string, name?: string, businessName?: string) => Promise<void>;
+  updateProfile: (input: { name?: string; businessName?: string }) => Promise<void>;
   logout: () => void;
 }
 
@@ -33,9 +34,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     persist(nextToken, nextUser);
   }
 
-  async function register(email: string, password: string, name?: string) {
-    const { token: nextToken, user: nextUser } = await authService.register(email, password, name);
+  async function register(email: string, password: string, name?: string, businessName?: string) {
+    const { token: nextToken, user: nextUser } = await authService.register(email, password, name, businessName);
     persist(nextToken, nextUser);
+  }
+
+  async function updateProfile(input: { name?: string; businessName?: string }) {
+    const nextUser = await authService.updateProfile(input);
+    localStorage.setItem("user", JSON.stringify(nextUser));
+    setUser(nextUser);
   }
 
   function logout() {
@@ -45,7 +52,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setUser(null);
   }
 
-  const value = useMemo(() => ({ user, token, login, register, logout }), [user, token]);
+  const value = useMemo(() => ({ user, token, login, register, updateProfile, logout }), [user, token]);
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }

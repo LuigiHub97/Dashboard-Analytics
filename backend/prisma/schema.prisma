@@ -12,10 +12,13 @@ model User {
   email                  String                  @unique
   password               String
   name                   String?
+  businessName           String?
   createdAt              DateTime                @default(now())
   categories             Category[]
   transactions           Transaction[]
   recurringTransactions  RecurringTransaction[]
+  ingredients            Ingredient[]
+  pizzas                 Pizza[]
 }
 
 model Category {
@@ -70,4 +73,50 @@ model RecurringTransaction {
   createdAt          DateTime      @default(now())
 
   @@index([userId])
+}
+
+model Ingredient {
+  id           String            @id @default(uuid())
+  name         String
+  unit         String // "kg" | "litro" | "unidade"
+  pricePerUnit Float
+  userId       String
+  user         User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+  pizzaLines   PizzaIngredient[]
+  createdAt    DateTime          @default(now())
+
+  @@unique([userId, name])
+  @@index([userId])
+}
+
+model Pizza {
+  id              String            @id @default(uuid())
+  name            String
+  packagingCost   Float
+  energyCost      Float
+  waterCost       Float
+  ingredientsCost Float
+  totalCost       Float
+  userId          String
+  user            User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+  ingredients     PizzaIngredient[]
+  createdAt       DateTime          @default(now())
+
+  @@index([userId])
+  @@index([userId, createdAt])
+}
+
+model PizzaIngredient {
+  id                String      @id @default(uuid())
+  pizzaId           String
+  pizza             Pizza       @relation(fields: [pizzaId], references: [id], onDelete: Cascade)
+  ingredientId      String?
+  ingredient        Ingredient? @relation(fields: [ingredientId], references: [id], onDelete: SetNull)
+  ingredientName    String
+  unit              String
+  quantity          Float
+  pricePerUnitAtUse Float
+  lineCost          Float
+
+  @@index([pizzaId])
 }

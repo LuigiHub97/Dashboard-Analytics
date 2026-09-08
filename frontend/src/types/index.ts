@@ -4,6 +4,7 @@ export interface User {
   id: string;
   email: string;
   name?: string | null;
+  businessName?: string | null;
 }
 
 export interface Category {
@@ -81,4 +82,38 @@ export interface TrendItem {
   month: string;
   income: number;
   expense: number;
+}
+
+export type IngredientUnit = "kg" | "litro" | "unidade";
+
+export interface Ingredient {
+  id: string;
+  name: string;
+  unit: IngredientUnit;
+  pricePerUnit: number;
+  userId: string;
+  createdAt: string;
+}
+
+export interface PizzaIngredientLine {
+  id: string;
+  ingredientId: string | null;
+  ingredientName: string;
+  unit: IngredientUnit;
+  quantity: number;
+  pricePerUnitAtUse: number;
+  lineCost: number;
+}
+
+export interface Pizza {
+  id: string;
+  name: string;
+  packagingCost: number;
+  energyCost: number;
+  waterCost: number;
+  ingredientsCost: number;
+  totalCost: number;
+  ingredients: PizzaIngredientLine[];
+  userId: string;
+  createdAt: string;
 }

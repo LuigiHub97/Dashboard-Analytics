@@ -19,6 +19,14 @@ const convertToRecurringSchema = z.object({
   dayOfMonth: z.number().int().min(1).max(31),
 });
 
+function endOfDayExclusive(dateStr: string): Date {
+  const parsed = new Date(dateStr);
+  if (/^\d{4}-\d{2}-\d{2}$/.test(dateStr)) {
+    parsed.setUTCDate(parsed.getUTCDate() + 1);
+  }
+  return parsed;
+}
+
 const listQuerySchema = z.object({
   startDate: z.string().optional(),
   endDate: z.string().optional(),
@@ -38,7 +46,7 @@ export async function listTransactions(req: AuthRequest, res: Response) {
   if (startDate || endDate) {
     where.date = {
       ...(startDate ? { gte: new Date(startDate) } : {}),
-      ...(endDate ? { lte: new Date(endDate) } : {}),
+      ...(endDate ? { lt: endOfDayExclusive(endDate) } : {}),
     };
   }
 

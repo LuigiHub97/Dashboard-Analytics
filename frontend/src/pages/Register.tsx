@@ -9,6 +9,7 @@ export function Register() {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [businessName, setBusinessName] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
 
@@ -23,7 +24,7 @@ export function Register() {
 
     setSubmitting(true);
     try {
-      await register(email, password, name || undefined);
+      await register(email, password, name || undefined, businessName || undefined);
       navigate("/");
     } catch (err) {
       setError(getErrorMessage(err, "Não foi possível criar a conta."));
@@ -53,6 +54,21 @@ export function Register() {
           Senha
           <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} required />
         </label>
+
+        <div className="auth-section">
+          <span className="field-label">Negócios (opcional)</span>
+          <label>
+            Nome do seu negócio
+            <input
+              type="text"
+              value={businessName}
+              onChange={(e) => setBusinessName(e.target.value)}
+              placeholder="Ex: Cavalieri"
+            />
+          </label>
+          <p className="auth-hint">Dá pra deixar em branco e configurar depois, na aba Empresa.</p>
+        </div>
+
         {error && <p className="form-error">{error}</p>}
         <button type="submit" className="btn-primary" disabled={submitting}>
           Criar conta

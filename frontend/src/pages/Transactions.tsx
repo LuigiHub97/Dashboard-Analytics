@@ -14,6 +14,7 @@ import {
   RecurringTransaction,
   Transaction,
   TransactionFilters,
+  TransactionType,
 } from "../types";
 
 type NewEntryTab = "single" | "recurring";
@@ -81,6 +82,23 @@ export function Transactions() {
   async function handleTogglePaid(transaction: Transaction) {
     await transactionsService.setTransactionPaid(transaction.id, !transaction.paid);
     await reload();
+  }
+
+  async function handleChangeCategory(transaction: Transaction, categoryId: string) {
+    await transactionsService.updateTransaction(transaction.id, { categoryId });
+    await reload();
+  }
+
+  async function handleCreateCategory(name: string, type: TransactionType): Promise<Category> {
+    try {
+      const created = await categoriesService.createCategory(name, type);
+      setCategories((prev) => [...prev, created]);
+      return created;
+    } catch {
+      const existing = categories.find((c) => c.type === type && c.name.toLowerCase() === name.toLowerCase());
+      if (existing) return existing;
+      throw new Error("Não foi possível criar a categoria.");
+    }
   }
 
   async function handleConvertToRecurring(dayOfMonth: number) {
@@ -190,9 +208,12 @@ export function Transactions() {
           <>
             <TransactionList
               transactions={transactions}
+              categories={categories}
               onEdit={setEditing}
               onDelete={handleDelete}
               onTogglePaid={handleTogglePaid}
+              onChangeCategory={handleChangeCategory}
+              onCreateCategory={handleCreateCategory}
             />
             {pagination && (
               <Pagination pagination={pagination} onPageChange={(page) => setFilters({ ...filters, page })} />
