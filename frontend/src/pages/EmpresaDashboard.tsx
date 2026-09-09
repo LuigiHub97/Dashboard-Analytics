@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { EmpresaSummaryCards } from "../components/EmpresaSummaryCards";
+import { PizzaRanking } from "../components/PizzaRanking";
 import { SaleForm } from "../components/SaleForm";
 import { SaleList } from "../components/SaleList";
 import * as pizzasService from "../services/pizzas.service";
@@ -116,6 +117,11 @@ export function EmpresaDashboard() {
               <EmpresaSummaryCards summary={summary} />
             </>
           )}
+
+          <div className="card">
+            <h2>Ranking de pizzas do mês</h2>
+            <PizzaRanking sales={monthSales} />
+          </div>
 
           <div className="card">
             <h2>Registrar venda</h2>
