@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Pizza } from "../types";
+import { PizzaMarginCalculator } from "./PizzaMarginCalculator";
 
 interface PizzaHistoryTableProps {
   pizzas: Pizza[];
@@ -73,6 +74,8 @@ export function PizzaHistoryTable({ pizzas, onDelete }: PizzaHistoryTableProps) 
                   <span>Água</span>
                   <span className="num">{currencyFormatter.format(pizza.waterCost)}</span>
                 </div>
+                <PizzaMarginCalculator cmvTotal={pizza.totalCost} />
+
                 <div className="pizza-history-actions">
                   <button type="button" className="btn-link btn-link-danger" onClick={() => onDelete(pizza)}>
                     Excluir pizza
