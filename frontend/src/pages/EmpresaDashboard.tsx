@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { PizzaRankingChart } from "../components/charts/PizzaRankingChart";
 import { EmpresaSummaryCards } from "../components/EmpresaSummaryCards";
 import { PizzaRanking } from "../components/PizzaRanking";
 import { SaleForm } from "../components/SaleForm";
@@ -43,6 +44,7 @@ export function EmpresaDashboard() {
   const [monthSales, setMonthSales] = useState<PizzaSale[]>([]);
   const [todaySales, setTodaySales] = useState<PizzaSale[]>([]);
   const [loading, setLoading] = useState(true);
+  const [showRankingChart, setShowRankingChart] = useState(false);
 
   async function reload() {
     setLoading(true);
@@ -121,6 +123,15 @@ export function EmpresaDashboard() {
           <div className="card">
             <h2>Ranking de pizzas do mês</h2>
             <PizzaRanking sales={monthSales} />
+
+            <button
+              type="button"
+              className="form-secondary-toggle"
+              onClick={() => setShowRankingChart((v) => !v)}
+            >
+              {showRankingChart ? "Ocultar gráfico" : "+ Ver gráfico"}
+            </button>
+            {showRankingChart && <PizzaRankingChart sales={monthSales} />}
           </div>
 
           <div className="card">

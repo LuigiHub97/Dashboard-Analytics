@@ -1008,6 +1008,7 @@ select:focus {
   font-weight: 600;
   cursor: pointer;
   padding: 0;
+  margin-top: 10px;
   margin-bottom: 16px;
   text-decoration: underline;
   text-underline-offset: 3px;
@@ -1261,6 +1262,18 @@ select:focus {
 
 .modal-card h2 {
   margin: 0;
+}
+
+.pizza-ranking-charts {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+
+@media (max-width: 700px) {
+  .pizza-ranking-charts {
+    grid-template-columns: 1fr;
+  }
 }
 
 .ranking-badge {
