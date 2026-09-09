@@ -12,7 +12,24 @@ import { errorHandler } from "./middleware/errorHandler";
 
 export const app = express();
 
-app.use(cors({ origin: process.env.CORS_ORIGIN ?? "http://localhost:5173" }));
+const localOrigins = ["http://localhost:5173", "http://localhost:5174"];
+const configuredOrigins = (process.env.CORS_ORIGIN ?? "")
+  .split(",")
+  .map((o) => o.trim())
+  .filter(Boolean);
+const allowedOrigins = [...new Set([...localOrigins, ...configuredOrigins])];
+
+app.use(
+  cors({
+    origin(origin, callback) {
+      if (!origin || allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        callback(new Error("Not allowed by CORS"));
+      }
+    },
+  })
+);
 app.use(express.json());
 
 app.get("/health", (_req, res) => res.json({ ok: true }));
