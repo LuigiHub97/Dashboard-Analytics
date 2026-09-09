@@ -395,6 +395,12 @@ a:hover {
   margin: 0;
 }
 
+.form-hint {
+  font-size: 12px;
+  color: var(--text-muted);
+  margin: 0 0 10px;
+}
+
 label {
   display: flex;
   flex-direction: column;
@@ -1194,6 +1200,8 @@ select:focus {
 }
 
 .pizza-history-actions {
+  display: flex;
+  gap: 16px;
   padding-top: 4px;
 }
 

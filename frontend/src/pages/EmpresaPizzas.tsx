@@ -8,6 +8,7 @@ import { Ingredient, Pizza } from "../types";
 export function EmpresaPizzas() {
   const [ingredients, setIngredients] = useState<Ingredient[]>([]);
   const [pizzas, setPizzas] = useState<Pizza[]>([]);
+  const [editing, setEditing] = useState<Pizza | null>(null);
   const [loading, setLoading] = useState(true);
 
   async function reload() {
@@ -28,6 +29,18 @@ export function EmpresaPizzas() {
   async function handleCreate(input: pizzasService.PizzaInput) {
     await pizzasService.createPizza(input);
     await reload();
+  }
+
+  async function handleUpdate(input: pizzasService.PizzaInput) {
+    if (!editing) return;
+    await pizzasService.updatePizza(editing.id, input);
+    setEditing(null);
+    await reload();
+  }
+
+  function handleEdit(pizza: Pizza) {
+    setEditing(pizza);
+    window.scrollTo({ top: 0, behavior: "smooth" });
   }
 
   async function handleDelete(pizza: Pizza) {
@@ -51,13 +64,20 @@ export function EmpresaPizzas() {
       ) : (
         <>
           <div className="card">
-            <h2>Nova pizza</h2>
-            <PizzaCmvForm ingredients={ingredients} defaultCosts={defaultCosts} onSubmit={handleCreate} />
+            <h2>{editing ? "Editar pizza" : "Nova pizza"}</h2>
+            <PizzaCmvForm
+              key={editing?.id ?? "new"}
+              ingredients={ingredients}
+              defaultCosts={defaultCosts}
+              initial={editing}
+              onSubmit={editing ? handleUpdate : handleCreate}
+              onCancel={editing ? () => setEditing(null) : undefined}
+            />
           </div>
 
           <div className="card">
             <h2>Histórico</h2>
-            <PizzaHistoryTable pizzas={pizzas} onDelete={handleDelete} />
+            <PizzaHistoryTable pizzas={pizzas} onEdit={handleEdit} onDelete={handleDelete} />
           </div>
         </>
       )}

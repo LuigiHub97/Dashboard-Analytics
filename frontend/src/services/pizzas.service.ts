@@ -24,6 +24,11 @@ export async function createPizza(input: PizzaInput): Promise<Pizza> {
   return data;
 }
 
+export async function updatePizza(id: string, input: PizzaInput): Promise<Pizza> {
+  const { data } = await api.put<Pizza>(`/pizzas/${id}`, input);
+  return data;
+}
+
 export async function deletePizza(id: string): Promise<void> {
   await api.delete(`/pizzas/${id}`);
 }

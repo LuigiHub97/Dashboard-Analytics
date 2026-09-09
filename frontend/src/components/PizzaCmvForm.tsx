@@ -1,12 +1,14 @@
 import { FormEvent, useEffect, useRef, useState } from "react";
-import { Ingredient } from "../types";
+import { Ingredient, Pizza } from "../types";
 import { PizzaInput } from "../services/pizzas.service";
 import { computeLineCost } from "../utils/cmv";
 
 interface PizzaCmvFormProps {
   ingredients: Ingredient[];
   defaultCosts: { packagingCost: number; energyCost: number; waterCost: number } | null;
+  initial?: Pizza | null;
   onSubmit: (input: PizzaInput) => Promise<void>;
+  onCancel?: () => void;
 }
 
 interface Line {
@@ -27,15 +29,26 @@ function parseNumber(value: string): number {
   return Number.isFinite(n) ? n : 0;
 }
 
-export function PizzaCmvForm({ ingredients, defaultCosts, onSubmit }: PizzaCmvFormProps) {
-  const [name, setName] = useState("");
-  const [lines, setLines] = useState<Line[]>([]);
-  const [packagingCost, setPackagingCost] = useState("0");
-  const [energyCost, setEnergyCost] = useState("0");
-  const [waterCost, setWaterCost] = useState("0");
+export function PizzaCmvForm({ ingredients, defaultCosts, initial, onSubmit, onCancel }: PizzaCmvFormProps) {
+  const ingredientById = new Map(ingredients.map((i) => [i.id, i]));
+
+  const initialLines: Line[] = initial
+    ? initial.ingredients
+        .filter((l) => l.ingredientId && ingredientById.has(l.ingredientId))
+        .map((l) => ({ ingredientId: l.ingredientId as string, quantity: String(l.quantity) }))
+    : [];
+  const missingIngredientsCount = initial
+    ? initial.ingredients.length - initialLines.length
+    : 0;
+
+  const [name, setName] = useState(initial?.name ?? "");
+  const [lines, setLines] = useState<Line[]>(initialLines);
+  const [packagingCost, setPackagingCost] = useState(initial ? String(initial.packagingCost) : "0");
+  const [energyCost, setEnergyCost] = useState(initial ? String(initial.energyCost) : "0");
+  const [waterCost, setWaterCost] = useState(initial ? String(initial.waterCost) : "0");
   const [error, setError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
-  const prefilled = useRef(false);
+  const prefilled = useRef(Boolean(initial));
 
   useEffect(() => {
     if (prefilled.current || !defaultCosts) return;
@@ -44,8 +57,6 @@ export function PizzaCmvForm({ ingredients, defaultCosts, onSubmit }: PizzaCmvFo
     setEnergyCost(String(defaultCosts.energyCost));
     setWaterCost(String(defaultCosts.waterCost));
   }, [defaultCosts]);
-
-  const ingredientById = new Map(ingredients.map((i) => [i.id, i]));
 
   function toggleIngredient(id: string) {
     setLines((prev) =>
@@ -121,6 +132,12 @@ export function PizzaCmvForm({ ingredients, defaultCosts, onSubmit }: PizzaCmvFo
       </label>
 
       <span className="field-label">Clique nos ingredientes que entram nessa pizza</span>
+      {missingIngredientsCount > 0 && (
+        <p className="form-hint">
+          {missingIngredientsCount} ingrediente(s) dessa pizza não estão mais cadastrados e foram removidos daqui —
+          adicione de novo se precisar.
+        </p>
+      )}
       <div className="category-chips">
         {ingredients.map((i) => (
           <button
@@ -193,8 +210,13 @@ export function PizzaCmvForm({ ingredients, defaultCosts, onSubmit }: PizzaCmvFo
 
       <div className="form-actions">
         <button type="submit" className="btn-primary" disabled={submitting}>
-          Salvar pizza
+          {initial ? "Salvar alterações" : "Salvar pizza"}
         </button>
+        {onCancel && (
+          <button type="button" className="btn-secondary" onClick={onCancel}>
+            Cancelar
+          </button>
+        )}
       </div>
     </form>
   );

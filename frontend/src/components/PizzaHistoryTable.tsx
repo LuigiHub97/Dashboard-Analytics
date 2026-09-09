@@ -4,6 +4,7 @@ import { PizzaMarginCalculator } from "./PizzaMarginCalculator";
 
 interface PizzaHistoryTableProps {
   pizzas: Pizza[];
+  onEdit: (pizza: Pizza) => void;
   onDelete: (pizza: Pizza) => void;
 }
 
@@ -16,7 +17,7 @@ const QUANTITY_SUFFIX: Record<string, string> = {
   unidade: "un",
 };
 
-export function PizzaHistoryTable({ pizzas, onDelete }: PizzaHistoryTableProps) {
+export function PizzaHistoryTable({ pizzas, onEdit, onDelete }: PizzaHistoryTableProps) {
   const [expandedId, setExpandedId] = useState<string | null>(null);
 
   if (pizzas.length === 0) {
@@ -77,6 +78,9 @@ export function PizzaHistoryTable({ pizzas, onDelete }: PizzaHistoryTableProps) 
                 <PizzaMarginCalculator cmvTotal={pizza.totalCost} />
 
                 <div className="pizza-history-actions">
+                  <button type="button" className="btn-link" onClick={() => onEdit(pizza)}>
+                    Editar pizza
+                  </button>
                   <button type="button" className="btn-link btn-link-danger" onClick={() => onDelete(pizza)}>
                     Excluir pizza
                   </button>
