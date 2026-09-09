@@ -1339,27 +1339,32 @@ select:focus {
    ========================================================================== */
 
 body.theme-empresa {
-  --bg: #f5f1e8;
-  --surface: rgba(255, 255, 255, 0.72);
-  --surface-solid: #ffffff;
-  --surface-2: #eee5d1;
-  --border: rgba(212, 175, 55, 0.35);
-  --border-strong: rgba(212, 175, 55, 0.6);
-  --text-primary: #1a1a1a;
+  /* Fundo escuro (como a parte de fora do rótulo), cards em tom de papel
+     envelhecido (como o miolo do rótulo) — por isso texto primário fica
+     escuro (lê bem em cima do creme dos cards), e os elementos que ficam
+     direto em cima do fundo escuro (título da página) são tratados à parte. */
+  --bg: #1c1712;
+  --surface: rgba(237, 224, 196, 0.9);
+  --surface-solid: #ede0c4;
+  --surface-2: #ddcda3;
+  --border: rgba(26, 23, 18, 0.14);
+  --border-strong: rgba(184, 148, 74, 0.7);
+  --text-primary: #1a1712;
   --text-secondary: #4a4030;
-  --text-muted: #8a7d5c;
-  --accent: #1a472a;
-  --accent-ink: #f5f1e8;
-  --good: #1a472a;
-  --good-bg: rgba(26, 71, 42, 0.12);
-  --critical: #8b2e2e;
-  --critical-bg: rgba(139, 46, 46, 0.12);
-  --track: rgba(212, 175, 55, 0.15);
-  --gold: #d4af37;
+  --text-muted: #7a6f57;
+  --accent: #1f5c37;
+  --accent-ink: #ede0c4;
+  --good: #1f5c37;
+  --good-bg: rgba(31, 92, 55, 0.14);
+  --critical: #7a2426;
+  --critical-bg: rgba(122, 36, 38, 0.14);
+  --track: rgba(184, 148, 74, 0.18);
+  --gold: #b8935a;
+  --text-on-dark: #ede0c4;
   color-scheme: light;
   background:
-    radial-gradient(ellipse 900px 480px at 12% -10%, rgba(212, 175, 55, 0.12), transparent 65%),
-    radial-gradient(ellipse 700px 420px at 92% 0%, rgba(139, 46, 46, 0.07), transparent 65%),
+    radial-gradient(ellipse 900px 480px at 12% -10%, rgba(184, 148, 74, 0.14), transparent 65%),
+    radial-gradient(ellipse 700px 420px at 92% 0%, rgba(122, 36, 38, 0.12), transparent 65%),
     var(--bg);
 }
 
@@ -1370,8 +1375,17 @@ body.theme-empresa {
   font-family: "Playfair Display", Georgia, serif;
 }
 
+.theme-empresa .page-header h1 {
+  color: var(--text-on-dark);
+}
+
+.theme-empresa .page > .empty-state {
+  color: var(--text-on-dark);
+  opacity: 0.7;
+}
+
 .theme-empresa .navbar {
-  background: rgba(255, 253, 248, 0.85);
+  background: rgba(237, 224, 196, 0.92);
   border-bottom: 2px solid var(--border-strong);
 }
 
@@ -1386,19 +1400,7 @@ body.theme-empresa {
   border-color: var(--border-strong);
 }
 
-.theme-empresa .stat-value:not(.stat-positive):not(.stat-negative) {
-  color: var(--gold);
-}
-
-.theme-empresa .pizza-summary-total:not(.pizza-margin-positive):not(.pizza-margin-negative) {
-  color: var(--gold);
-}
-
-.theme-empresa .donut-legend-value {
-  color: var(--gold);
-}
-
 .theme-empresa .ranking-badge {
-  background: color-mix(in srgb, var(--gold) 20%, transparent);
+  background: color-mix(in srgb, var(--gold) 22%, transparent);
   color: var(--gold);
 }
