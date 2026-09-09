@@ -1225,6 +1225,12 @@ select:focus {
   margin-top: 4px;
 }
 
+.pizza-margin-totals {
+  margin-top: 10px;
+  padding-top: 10px;
+  border-top: 1px dashed var(--border-strong);
+}
+
 .pizza-margin-positive {
   color: var(--good);
 }
