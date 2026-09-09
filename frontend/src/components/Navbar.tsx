@@ -32,9 +32,13 @@ export function Navbar() {
     <header className="navbar">
       <div className="navbar-brand">
         <span className="navbar-brand-mark">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
-            <path d="M4 17l5-5 4 4 7-9" stroke="#12261c" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
-          </svg>
+          {isBusiness ? (
+            <img src="/LogoCav.jpg" alt="Forneria Cavalieri" className="navbar-brand-logo" />
+          ) : (
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+              <path d="M4 17l5-5 4 4 7-9" stroke="#12261c" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
+            </svg>
+          )}
         </span>
         <span className="navbar-brand-text">{isBusiness ? user?.businessName || "Empresa" : "Dashboard Analytics"}</span>
       </div>
