@@ -44,6 +44,7 @@ export function EmpresaDashboard() {
   const [monthSales, setMonthSales] = useState<PizzaSale[]>([]);
   const [todaySales, setTodaySales] = useState<PizzaSale[]>([]);
   const [loading, setLoading] = useState(true);
+  const [showRanking, setShowRanking] = useState(false);
   const [showRankingChart, setShowRankingChart] = useState(false);
 
   async function reload() {
@@ -121,17 +122,35 @@ export function EmpresaDashboard() {
           )}
 
           <div className="card">
-            <h2>Ranking de pizzas do mês</h2>
-            <PizzaRanking sales={monthSales} />
-
-            <button
-              type="button"
-              className="form-secondary-toggle"
-              onClick={() => setShowRankingChart((v) => !v)}
-            >
-              {showRankingChart ? "Ocultar gráfico" : "+ Ver gráfico"}
+            <button type="button" className="card-toggle-header" onClick={() => setShowRanking((v) => !v)}>
+              <h2>Ranking de pizzas do mês</h2>
+              <svg
+                className={"donut-legend-chevron" + (showRanking ? " expanded" : "")}
+                width="14"
+                height="14"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="3"
+              >
+                <path d="M6 9l6 6 6-6" />
+              </svg>
             </button>
-            {showRankingChart && <PizzaRankingChart sales={monthSales} />}
+
+            {showRanking && (
+              <>
+                <PizzaRanking sales={monthSales} />
+
+                <button
+                  type="button"
+                  className="form-secondary-toggle"
+                  onClick={() => setShowRankingChart((v) => !v)}
+                >
+                  {showRankingChart ? "Ocultar gráfico" : "+ Ver gráfico"}
+                </button>
+                {showRankingChart && <PizzaRankingChart sales={monthSales} />}
+              </>
+            )}
           </div>
 
           <div className="card">
