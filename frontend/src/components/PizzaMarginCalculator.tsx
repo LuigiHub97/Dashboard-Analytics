@@ -71,6 +71,8 @@ export function PizzaMarginCalculator({ cmvTotal }: PizzaMarginCalculatorProps) 
         </label>
       </div>
 
+      {!hasPrice && <p className="form-hint">Informe o preço de venda acima para calcular a comissão e o lucro.</p>}
+
       {hasPrice && (
         <div className="pizza-margin-result">
           <div className="pizza-summary-row">
