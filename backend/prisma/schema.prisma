@@ -19,6 +19,7 @@ model User {
   recurringTransactions  RecurringTransaction[]
   ingredients            Ingredient[]
   pizzas                 Pizza[]
+  pizzaSales             PizzaSale[]
 }
 
 model Category {
@@ -100,6 +101,7 @@ model Pizza {
   userId          String
   user            User              @relation(fields: [userId], references: [id], onDelete: Cascade)
   ingredients     PizzaIngredient[]
+  sales           PizzaSale[]
   createdAt       DateTime          @default(now())
 
   @@index([userId])
@@ -119,4 +121,25 @@ model PizzaIngredient {
   lineCost          Float
 
   @@index([pizzaId])
+}
+
+model PizzaSale {
+  id            String   @id @default(uuid())
+  userId        String
+  user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  pizzaId       String?
+  pizza         Pizza?   @relation(fields: [pizzaId], references: [id], onDelete: SetNull)
+  pizzaName     String
+  quantity      Int
+  unitPrice     Float
+  commissionPct Float
+  unitCmv       Float
+  totalRevenue  Float
+  totalCost     Float
+  totalProfit   Float
+  date          DateTime
+  createdAt     DateTime @default(now())
+
+  @@index([userId])
+  @@index([userId, date])
 }

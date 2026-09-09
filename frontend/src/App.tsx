@@ -3,6 +3,7 @@ import { Navbar } from "./components/Navbar";
 import { PrivateRoute } from "./components/PrivateRoute";
 import { AuthProvider, useAuth } from "./context/AuthContext";
 import { Dashboard } from "./pages/Dashboard";
+import { EmpresaDashboard } from "./pages/EmpresaDashboard";
 import { EmpresaIngredients } from "./pages/EmpresaIngredients";
 import { EmpresaPizzas } from "./pages/EmpresaPizzas";
 import { Login } from "./pages/Login";
@@ -23,7 +24,8 @@ function AppLayout() {
             <Route path="/" element={<WorkspacePicker />} />
             <Route path="/personal" element={<Dashboard />} />
             <Route path="/personal/transactions" element={<Transactions />} />
-            <Route path="/business" element={<Navigate to="/business/pizzas" replace />} />
+            <Route path="/business" element={<Navigate to="/business/dashboard" replace />} />
+            <Route path="/business/dashboard" element={<EmpresaDashboard />} />
             <Route path="/business/pizzas" element={<EmpresaPizzas />} />
             <Route path="/business/ingredients" element={<EmpresaIngredients />} />
           </Route>

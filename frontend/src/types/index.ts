@@ -117,3 +117,27 @@ export interface Pizza {
   userId: string;
   createdAt: string;
 }
+
+export interface PizzaSale {
+  id: string;
+  pizzaId: string | null;
+  pizzaName: string;
+  quantity: number;
+  unitPrice: number;
+  commissionPct: number;
+  unitCmv: number;
+  totalRevenue: number;
+  totalCost: number;
+  totalProfit: number;
+  date: string;
+  userId: string;
+  createdAt: string;
+}
+
+export interface SalesSummary {
+  month: string;
+  quantity: number;
+  totalRevenue: number;
+  totalCost: number;
+  totalProfit: number;
+}

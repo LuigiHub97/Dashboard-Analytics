@@ -41,6 +41,9 @@ export function Navbar() {
       <nav className="navbar-links">
         {isBusiness ? (
           <>
+            <NavLink to="/business/dashboard" className={({ isActive }) => (isActive ? "active" : "")}>
+              Dashboard
+            </NavLink>
             <NavLink to="/business/pizzas" className={({ isActive }) => (isActive ? "active" : "")}>
               Pizzas
             </NavLink>

@@ -1,19 +1,9 @@
 import { useState } from "react";
+import { SALES_CHANNELS } from "../constants/salesChannels";
 
 interface PizzaMarginCalculatorProps {
   cmvTotal: number;
 }
-
-interface Channel {
-  label: string;
-  commissionPct: number;
-}
-
-const CHANNELS: Channel[] = [
-  { label: "Cardápio próprio", commissionPct: 0 },
-  { label: "iFood", commissionPct: 23 },
-  { label: "99Food", commissionPct: 10.9 },
-];
 
 const currencyFormatter = new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" });
 
@@ -43,7 +33,7 @@ export function PizzaMarginCalculator({ cmvTotal }: PizzaMarginCalculatorProps) 
     <div className="pizza-margin">
       <span className="field-label">Simular preço de venda</span>
       <div className="category-chips">
-        {CHANNELS.map((c) => (
+        {SALES_CHANNELS.map((c) => (
           <button
             type="button"
             key={c.label}

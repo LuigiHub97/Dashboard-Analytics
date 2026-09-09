@@ -6,6 +6,7 @@ import dashboardRoutes from "./routes/dashboard.routes";
 import ingredientsRoutes from "./routes/ingredients.routes";
 import pizzasRoutes from "./routes/pizzas.routes";
 import recurringTransactionsRoutes from "./routes/recurringTransactions.routes";
+import salesRoutes from "./routes/sales.routes";
 import transactionsRoutes from "./routes/transactions.routes";
 import { errorHandler } from "./middleware/errorHandler";
 
@@ -23,5 +24,6 @@ app.use("/api/dashboard", dashboardRoutes);
 app.use("/api/recurring-transactions", recurringTransactionsRoutes);
 app.use("/api/ingredients", ingredientsRoutes);
 app.use("/api/pizzas", pizzasRoutes);
+app.use("/api/sales", salesRoutes);
 
 app.use(errorHandler);
