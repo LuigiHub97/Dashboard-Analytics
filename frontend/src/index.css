@@ -1330,3 +1330,75 @@ select:focus {
   font-weight: 600;
   white-space: nowrap;
 }
+
+/* ==========================================================================
+   Tema Empresa — Forneria Cavalieri (napoletano clássico)
+   Liga automaticamente em document.body.theme-empresa quando a rota é
+   /business/*. Reaproveita as mesmas variáveis/classes do tema padrão —
+   só troca os valores, nenhum componente muda de estrutura.
+   ========================================================================== */
+
+body.theme-empresa {
+  --bg: #f5f1e8;
+  --surface: rgba(255, 255, 255, 0.72);
+  --surface-solid: #ffffff;
+  --surface-2: #eee5d1;
+  --border: rgba(212, 175, 55, 0.35);
+  --border-strong: rgba(212, 175, 55, 0.6);
+  --text-primary: #1a1a1a;
+  --text-secondary: #4a4030;
+  --text-muted: #8a7d5c;
+  --accent: #1a472a;
+  --accent-ink: #f5f1e8;
+  --good: #1a472a;
+  --good-bg: rgba(26, 71, 42, 0.12);
+  --critical: #8b2e2e;
+  --critical-bg: rgba(139, 46, 46, 0.12);
+  --track: rgba(212, 175, 55, 0.15);
+  --gold: #d4af37;
+  color-scheme: light;
+  background:
+    radial-gradient(ellipse 900px 480px at 12% -10%, rgba(212, 175, 55, 0.12), transparent 65%),
+    radial-gradient(ellipse 700px 420px at 92% 0%, rgba(139, 46, 46, 0.07), transparent 65%),
+    var(--bg);
+}
+
+.theme-empresa h1,
+.theme-empresa h2,
+.theme-empresa h3,
+.theme-empresa .navbar-brand-text {
+  font-family: "Playfair Display", Georgia, serif;
+}
+
+.theme-empresa .navbar {
+  background: rgba(255, 253, 248, 0.85);
+  border-bottom: 2px solid var(--border-strong);
+}
+
+.theme-empresa .navbar-brand-mark {
+  background: linear-gradient(135deg, var(--accent), var(--gold));
+}
+
+.theme-empresa .card,
+.theme-empresa .stat-card,
+.theme-empresa .workspace-card {
+  border-width: 2px;
+  border-color: var(--border-strong);
+}
+
+.theme-empresa .stat-value:not(.stat-positive):not(.stat-negative) {
+  color: var(--gold);
+}
+
+.theme-empresa .pizza-summary-total:not(.pizza-margin-positive):not(.pizza-margin-negative) {
+  color: var(--gold);
+}
+
+.theme-empresa .donut-legend-value {
+  color: var(--gold);
+}
+
+.theme-empresa .ranking-badge {
+  background: color-mix(in srgb, var(--gold) 20%, transparent);
+  color: var(--gold);
+}

@@ -1,4 +1,5 @@
-import { Navigate, Route, Routes } from "react-router-dom";
+import { useEffect } from "react";
+import { Navigate, Route, Routes, useLocation } from "react-router-dom";
 import { Navbar } from "./components/Navbar";
 import { PrivateRoute } from "./components/PrivateRoute";
 import { AuthProvider, useAuth } from "./context/AuthContext";
@@ -13,6 +14,13 @@ import { WorkspacePicker } from "./pages/WorkspacePicker";
 
 function AppLayout() {
   const { token } = useAuth();
+  const location = useLocation();
+  const isBusiness = location.pathname.startsWith("/business");
+
+  useEffect(() => {
+    document.body.classList.toggle("theme-empresa", isBusiness);
+  }, [isBusiness]);
+
   return (
     <>
       {token && <Navbar />}

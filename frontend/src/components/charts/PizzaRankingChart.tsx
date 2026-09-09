@@ -7,8 +7,8 @@ interface PizzaRankingChartProps {
 }
 
 const currencyFormatter = new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" });
-const QUANTITY_COLOR = "oklch(74% 0.16 195)";
-const PROFIT_COLOR = "oklch(78% 0.19 150)";
+const QUANTITY_COLOR = "#1a472a";
+const PROFIT_COLOR = "#d4af37";
 
 const tooltipStyle = {
   contentStyle: { background: "#1c2636", border: "1px solid rgba(255,255,255,0.12)", borderRadius: 8, color: "#eef2f6" },
